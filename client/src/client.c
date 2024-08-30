@@ -24,10 +24,19 @@ int main(void)
 
 	config = iniciar_config();
 
+	valor = config_get_string_value (config,"CLAVE");
+	ip = config_get_string_value (config,"IP");
+	puerto = config_get_string_value (config,"PUERTO");
+
 	// Usando el config creado previamente, leemos los valores del config y los 
 	// dejamos en las variables 'ip', 'puerto' y 'valor'
 
 	// Loggeamos el valor de config
+
+	log_info (logger, "%s",valor);
+	log_info (logger, "%s",ip);
+	log_info (logger, "%s",puerto);
+
 
 
 	/* ---------------- LEER DE CONSOLA ---------------- */
@@ -54,15 +63,23 @@ int main(void)
 
 t_log* iniciar_logger(void)
 {
-	t_log* nuevo_logger;
 
+	t_log* nuevo_logger;
+	nuevo_logger = log_create ("/home/utnso/tp0/tp0.log","Pruebinha",true,LOG_LEVEL_INFO); 
+	if (nuevo_logger == NULL){
+	abort();
+	}
 	return nuevo_logger;
+	
 }
 
 t_config* iniciar_config(void)
 {
 	t_config* nuevo_config;
-
+	nuevo_config = config_create ("/home/utnso/tp0/client/cliente.config");
+	if (nuevo_config == NULL){
+	abort();
+	}
 	return nuevo_config;
 }
 
@@ -71,10 +88,18 @@ void leer_consola(t_log* logger)
 	char* leido;
 
 	// La primera te la dejo de yapa
-	leido = readline("> ");
+	//leido = readline("> ");
 
 	// El resto, las vamos leyendo y logueando hasta recibir un string vacío
-
+	 while (1) {
+        leido = readline(">");
+        if (strcmp(leido, "")==0) {
+            break;
+        }
+		log_info (logger,"%s",leido);
+		free(leido);
+    }
+	
 
 	// ¡No te olvides de liberar las lineas antes de regresar!
 
@@ -88,13 +113,14 @@ void paquete(int conexion)
 
 	// Leemos y esta vez agregamos las lineas al paquete
 
-
 	// ¡No te olvides de liberar las líneas y el paquete antes de regresar!
 	
+
 }
 
 void terminar_programa(int conexion, t_log* logger, t_config* config)
 {
+	log_destroy(logger);
 	/* Y por ultimo, hay que liberar lo que utilizamos (conexion, log y config) 
 	  con las funciones de las commons y del TP mencionadas en el enunciado */
 }
